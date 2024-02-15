@@ -46,7 +46,7 @@ function addBook() {
   document.getElementById("inputBookIsComplete").checked = false;
 }
 
-function makeBook(bookTitle, bookAuthor, bookYear, isCompleted) {
+function makeBook(bookTitle, bookAuthor, bookYear, isComplete) {
   const textTitle = document.createElement("h3");
   textTitle.innerText = bookTitle;
 
@@ -60,13 +60,13 @@ function makeBook(bookTitle, bookAuthor, bookYear, isCompleted) {
 
   const action = document.createElement("div");
   action.classList.add("action");
-  if (isCompleted === false) {
+  if (isComplete === false) {
     action.append(
       createGreenReadButton(),
       createBlueButton(),
       createRedButton()
     );
-  } else if (isCompleted === true) {
+  } else if (isComplete === true) {
     action.append(
       createGreenNotYetReadButton(),
       createBlueButton(),
@@ -94,7 +94,7 @@ function addBookToRead(bookElement) {
   const bookListCompleted = document.getElementById(COMPLETED_LIST_BOOK_ID);
 
   const book = findBook(bookElement[BOOK_ITEMID]);
-  book.isCompleted = true;
+  book.isComplete = true;
 
   const bookToRead = makeBook(book.title, book.author, book.year, true);
   bookToRead[BOOK_ITEMID] = book.id;
@@ -116,7 +116,7 @@ function addBookToNotYetRead(bookElement) {
   );
 
   const book = findBook(bookElement[BOOK_ITEMID]);
-  book.isCompleted = false;
+  book.isComplete = false;
 
   const bookToNotYetRead = makeBook(book.title, book.author, book.year, false);
   bookToNotYetRead[BOOK_ITEMID] = book.id;
@@ -174,7 +174,7 @@ function editBook(bookElement) {
       newTextTitle,
       newTextAuthor,
       newTextYear,
-      book.isCompleted
+      book.isComplete
     );
     updatedBookElement[BOOK_ITEMID] = book.id;
 

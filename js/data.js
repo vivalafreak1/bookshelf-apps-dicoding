@@ -30,13 +30,13 @@ function updateDataToStorage() {
   if (isStorageExist()) saveData();
 }
 
-function composeBookObject(title, author, year, isCompleted) {
+function composeBookObject(title, author, year, isComplete) {
   return {
     id: +new Date(),
     title,
     author,
-    year,
-    isCompleted,
+    year: parseInt(year),
+    isComplete,
   };
 }
 
@@ -66,11 +66,11 @@ function refreshDataFromBookshelf() {
       book.title,
       book.author,
       book.year,
-      book.isCompleted
+      book.isComplete
     );
     newBook[BOOK_ITEMID] = book.id;
 
-    if (book.isCompleted) {
+    if (book.isComplete) {
       console.log(newBook);
       listreadCompleteBook.append(newBook);
     } else {
