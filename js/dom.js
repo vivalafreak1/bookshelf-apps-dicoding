@@ -93,16 +93,12 @@ function createButton(buttonTypeClass, buttonText, eventListener) {
 function addBookToRead(bookElement) {
   const bookListCompleted = document.getElementById(COMPLETED_LIST_BOOK_ID);
 
-  const bookTitle = document.querySelector(".book_item > h3").innerText;
-  const bookAuthor = document.querySelector(".book_item > .penulis").innerText;
-  const bookYear = document.querySelector(".book_item > .tahun").innerText;
-
-  const bookToRead = makeBook(bookTitle, bookAuthor, bookYear, true);
-
   const book = findBook(bookElement[BOOK_ITEMID]);
   book.isCompleted = true;
 
+  const bookToRead = makeBook(book.title, book.author, book.year, true);
   bookToRead[BOOK_ITEMID] = book.id;
+
   bookListCompleted.append(bookToRead);
   bookElement.remove();
   updateDataToStorage();
@@ -118,20 +114,15 @@ function addBookToNotYetRead(bookElement) {
   const bookListNotYetCompleted = document.getElementById(
     INCOMPLETE_LIST_BOOK_ID
   );
-  const bookTitle = bookElement.querySelector(".book_item > h3").innerText;
-  const bookAuthor = bookElement.querySelector(
-    ".book_item  > .penulis"
-  ).innerText;
-  const bookYear = bookElement.querySelector(".book_item > .tahun").innerText;
 
-  const bookToNotYetRead = makeBook(bookTitle, bookAuthor, bookYear, false);
   const book = findBook(bookElement[BOOK_ITEMID]);
   book.isCompleted = false;
 
+  const bookToNotYetRead = makeBook(book.title, book.author, book.year, false);
   bookToNotYetRead[BOOK_ITEMID] = book.id;
+
   bookListNotYetCompleted.append(bookToNotYetRead);
   bookElement.remove();
-
   updateDataToStorage();
 }
 
@@ -143,7 +134,7 @@ function createGreenNotYetReadButton() {
 
 function removeBook(bookElement) {
   if (confirm("Apakah anda ingin menghapus buku ini?")) {
-    const bookPosition = findBookIndex[bookElement[BOOK_ITEMID]];
+    const bookPosition = findBookIndex(bookElement[BOOK_ITEMID]);
     bookShelf.splice(bookPosition, 1);
 
     bookElement.remove();
@@ -164,11 +155,15 @@ function editBook(bookElement) {
 
   const title = bookElement.querySelector("h3").innerText;
   const author = bookElement.querySelector(".penulis").innerText;
-  const year = bookElement.querySelector(".tahun").innerText;
+  const year = parseInt(bookElement.querySelector(".tahun").innerText);
 
   const newTextTitle = prompt("Edit Judul:", title);
   const newTextAuthor = prompt("Edit Penulis:", author);
-  const newTextYear = prompt("Edit Tahun:", year);
+
+  let newTextYear;
+  do {
+    newTextYear = prompt("Edit Tahun (hanya angka):", year);
+  } while (newTextYear !== null && !/^\d+$/.test(newTextYear));
 
   if (newTextTitle && newTextAuthor && newTextYear) {
     book.title = newTextTitle;
