@@ -168,7 +168,7 @@ function editBook(bookElement) {
   if (newTextTitle && newTextAuthor && newTextYear) {
     book.title = newTextTitle;
     book.author = newTextAuthor;
-    book.year = newTextYear;
+    book.year = parseInt(newTextYear);
 
     const updatedBookElement = makeBook(
       newTextTitle,
