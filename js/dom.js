@@ -37,6 +37,13 @@ function addBook() {
     completeBookList.append(book);
   }
   updateDataToStorage();
+
+  alert("Buku berhasil ditambahkan");
+
+  document.getElementById("inputBookTitle").value = "";
+  document.getElementById("inputBookAuthor").value = "";
+  document.getElementById("inputBookYear").value = "";
+  document.getElementById("inputBookIsComplete").checked = false;
 }
 
 function makeBook(bookTitle, bookAuthor, bookYear, isCompleted) {
@@ -54,9 +61,17 @@ function makeBook(bookTitle, bookAuthor, bookYear, isCompleted) {
   const action = document.createElement("div");
   action.classList.add("action");
   if (isCompleted === false) {
-    action.append(createGreenReadButton(), createRedButton());
+    action.append(
+      createGreenReadButton(),
+      createBlueButton(),
+      createRedButton()
+    );
   } else if (isCompleted === true) {
-    action.append(createGreenNotYetReadButton(), createRedButton());
+    action.append(
+      createGreenNotYetReadButton(),
+      createBlueButton(),
+      createRedButton()
+    );
   }
   const textArticle = document.createElement("article");
   textArticle.classList.add("book_item");
@@ -141,6 +156,42 @@ function removeBook(bookElement) {
 function createRedButton() {
   return createButton("red", "Hapus buku", function (event) {
     removeBook(event.target.parentElement.parentElement);
+  });
+}
+
+function editBook(bookElement) {
+  const book = findBook(bookElement[BOOK_ITEMID]);
+
+  const title = bookElement.querySelector("h3").innerText;
+  const author = bookElement.querySelector(".penulis").innerText;
+  const year = bookElement.querySelector(".tahun").innerText;
+
+  const newTextTitle = prompt("Edit Judul:", title);
+  const newTextAuthor = prompt("Edit Penulis:", author);
+  const newTextYear = prompt("Edit Tahun:", year);
+
+  if (newTextTitle && newTextAuthor && newTextYear) {
+    book.title = newTextTitle;
+    book.author = newTextAuthor;
+    book.year = newTextYear;
+
+    const updatedBookElement = makeBook(
+      newTextTitle,
+      newTextAuthor,
+      newTextYear,
+      book.isCompleted
+    );
+    updatedBookElement[BOOK_ITEMID] = book.id;
+
+    bookElement.replaceWith(updatedBookElement);
+
+    updateDataToStorage();
+  }
+}
+
+function createBlueButton() {
+  return createButton("blue", "Edit Buku", function (event) {
+    editBook(event.target.parentElement.parentElement);
   });
 }
 
