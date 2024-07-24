@@ -41,8 +41,10 @@ function composeBookObject(title, author, year, isComplete) {
 }
 
 function findBook(bookID) {
-  for (book of bookShelf) {
-    if (book.id === bookID) return book;
+  for (let book of bookShelf) {
+    if (book.id === parseInt(bookID)) {
+      return book;
+    }
   }
   return null;
 }
@@ -66,15 +68,14 @@ function refreshDataFromBookshelf() {
       book.title,
       book.author,
       book.year,
-      book.isComplete
+      book.isComplete,
+      book.id
     );
-    newBook[BOOK_ITEMID] = book.id;
+    newBook.setAttribute("data-bookid", book.id);
 
     if (book.isComplete) {
-      console.log(newBook);
       listreadCompleteBook.append(newBook);
     } else {
-      console.log(newBook);
       listUnreadBook.append(newBook);
     }
   }

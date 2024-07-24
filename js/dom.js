@@ -11,8 +11,9 @@ function addBook() {
   const textYear = document.getElementById("inputBookYear").value;
   const isChecked = document.getElementById("inputBookIsComplete").checked;
 
+  const bookId = +new Date();
   let dataBook = {
-    id: +new Date(),
+    id: bookId,
     title: textTitle,
     author: textAuthor,
     year: textYear,
@@ -20,17 +21,17 @@ function addBook() {
   };
 
   console.log(dataBook);
-  const book = makeBook(textTitle, textAuthor, textYear, isChecked);
+  const book = makeBook(textTitle, textAuthor, textYear, isChecked, bookId);
   const bookObject = composeBookObject(
     textTitle,
     textAuthor,
     textYear,
     isChecked
   );
-  console.log(bookObject);
   book[BOOK_ITEMID] = bookObject.id;
   bookShelf.push(bookObject);
 
+  console.log(bookObject);
   if (isChecked === false) {
     incompleteBookList.append(book);
   } else {
@@ -46,17 +47,20 @@ function addBook() {
   document.getElementById("inputBookIsComplete").checked = false;
 }
 
-function makeBook(bookTitle, bookAuthor, bookYear, isComplete) {
+function makeBook(bookTitle, bookAuthor, bookYear, isComplete, bookId) {
   const textTitle = document.createElement("h3");
   textTitle.innerText = bookTitle;
+  textTitle.setAttribute("data-testid", "bookItemTitle");
 
   const textAuthor = document.createElement("p");
   textAuthor.innerText = bookAuthor;
   textAuthor.classList.add("penulis");
+  textAuthor.setAttribute("data-testid", "bookItemAuthor");
 
   const textYear = document.createElement("p");
   textYear.innerText = bookYear;
   textYear.classList.add("tahun");
+  textYear.setAttribute("data-testid", "bookItemYear");
 
   const action = document.createElement("div");
   action.classList.add("action");
@@ -75,6 +79,8 @@ function makeBook(bookTitle, bookAuthor, bookYear, isComplete) {
   }
   const textArticle = document.createElement("article");
   textArticle.classList.add("book_item");
+  textArticle.setAttribute("data-bookid", bookId);
+  textArticle.setAttribute("data-testid", "bookItem");
   textArticle.append(textTitle, textAuthor, textYear, action);
   return textArticle;
 }
@@ -92,16 +98,28 @@ function createButton(buttonTypeClass, buttonText, eventListener) {
 
 function addBookToRead(bookElement) {
   const bookListCompleted = document.getElementById(COMPLETED_LIST_BOOK_ID);
+  const bookId = bookElement.getAttribute("data-bookid");
+  console.log("bookId:", bookId); // Log bookId
+  const book = findBook(bookId);
+  console.log("book:", book); // Log the book object
+  if (book) {
+    book.isComplete = true;
 
-  const book = findBook(bookElement[BOOK_ITEMID]);
-  book.isComplete = true;
+    const bookToRead = makeBook(
+      book.title,
+      book.author,
+      book.year,
+      true,
+      bookId
+    );
+    bookToRead.setAttribute("data-bookid", book.id);
 
-  const bookToRead = makeBook(book.title, book.author, book.year, true);
-  bookToRead[BOOK_ITEMID] = book.id;
-
-  bookListCompleted.append(bookToRead);
-  bookElement.remove();
-  updateDataToStorage();
+    bookListCompleted.append(bookToRead);
+    bookElement.remove();
+    updateDataToStorage();
+  } else {
+    console.error("Book not found");
+  }
 }
 
 function createGreenReadButton() {
@@ -114,12 +132,18 @@ function addBookToNotYetRead(bookElement) {
   const bookListNotYetCompleted = document.getElementById(
     INCOMPLETE_LIST_BOOK_ID
   );
-
-  const book = findBook(bookElement[BOOK_ITEMID]);
+  const bookId = bookElement.getAttribute("data-bookid");
+  const book = findBook(bookId);
   book.isComplete = false;
 
-  const bookToNotYetRead = makeBook(book.title, book.author, book.year, false);
-  bookToNotYetRead[BOOK_ITEMID] = book.id;
+  const bookToNotYetRead = makeBook(
+    book.title,
+    book.author,
+    book.year,
+    false,
+    bookId
+  );
+  bookToNotYetRead.setAttribute("data-bookid", book.id);
 
   bookListNotYetCompleted.append(bookToNotYetRead);
   bookElement.remove();
@@ -134,7 +158,8 @@ function createGreenNotYetReadButton() {
 
 function removeBook(bookElement) {
   if (confirm("Apakah anda ingin menghapus buku ini?")) {
-    const bookPosition = findBookIndex(bookElement[BOOK_ITEMID]);
+    const bookId = bookElement.getAttribute("data-bookid");
+    const bookPosition = findBookIndex(bookId);
     bookShelf.splice(bookPosition, 1);
 
     bookElement.remove();
@@ -151,7 +176,8 @@ function createRedButton() {
 }
 
 function editBook(bookElement) {
-  const book = findBook(bookElement[BOOK_ITEMID]);
+  const bookId = bookElement.getAttribute("data-bookid");
+  const book = findBook(bookId);
 
   const title = bookElement.querySelector("h3").innerText;
   const author = bookElement.querySelector(".penulis").innerText;
@@ -174,9 +200,10 @@ function editBook(bookElement) {
       newTextTitle,
       newTextAuthor,
       newTextYear,
-      book.isComplete
+      book.isComplete,
+      bookId
     );
-    updatedBookElement[BOOK_ITEMID] = book.id;
+    updatedBookElement.setAttribute("data-bookid", book.id);
 
     bookElement.replaceWith(updatedBookElement);
 
