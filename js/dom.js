@@ -85,10 +85,11 @@ function makeBook(bookTitle, bookAuthor, bookYear, isComplete, bookId) {
   return textArticle;
 }
 
-function createButton(buttonTypeClass, buttonText, eventListener) {
+function createButton(buttonTypeClass, buttonText, eventListener, dataTestId) {
   const button = document.createElement("button");
   button.classList.add(buttonTypeClass);
   button.innerText = buttonText;
+  button.setAttribute("data-testid", dataTestId);
 
   button.addEventListener("click", function (event) {
     eventListener(event);
@@ -123,9 +124,14 @@ function addBookToRead(bookElement) {
 }
 
 function createGreenReadButton() {
-  return createButton("green", "Selesai dibaca", function (event) {
-    addBookToRead(event.target.parentElement.parentElement);
-  });
+  return createButton(
+    "green",
+    "Selesai dibaca",
+    function (event) {
+      addBookToRead(event.target.parentElement.parentElement);
+    },
+    "bookItemIsCompleteButton"
+  );
 }
 
 function addBookToNotYetRead(bookElement) {
@@ -151,9 +157,14 @@ function addBookToNotYetRead(bookElement) {
 }
 
 function createGreenNotYetReadButton() {
-  return createButton("green", "Belum selesai dibaca", function (event) {
-    addBookToNotYetRead(event.target.parentElement.parentElement);
-  });
+  return createButton(
+    "green",
+    "Belum selesai dibaca",
+    function (event) {
+      addBookToNotYetRead(event.target.parentElement.parentElement);
+    },
+    "bookItemIsCompleteButton"
+  );
 }
 
 function removeBook(bookElement) {
@@ -170,9 +181,14 @@ function removeBook(bookElement) {
 }
 
 function createRedButton() {
-  return createButton("red", "Hapus buku", function (event) {
-    removeBook(event.target.parentElement.parentElement);
-  });
+  return createButton(
+    "red",
+    "Hapus buku",
+    function (event) {
+      removeBook(event.target.parentElement.parentElement);
+    },
+    "bookItemDeleteButton"
+  );
 }
 
 function editBook(bookElement) {
@@ -212,9 +228,14 @@ function editBook(bookElement) {
 }
 
 function createBlueButton() {
-  return createButton("blue", "Edit Buku", function (event) {
-    editBook(event.target.parentElement.parentElement);
-  });
+  return createButton(
+    "blue",
+    "Edit Buku",
+    function (event) {
+      editBook(event.target.parentElement.parentElement);
+    },
+    "bookItemEditButton"
+  );
 }
 
 function searchBook() {
